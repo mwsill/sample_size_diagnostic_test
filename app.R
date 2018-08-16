@@ -1,11 +1,15 @@
+#--------------------------------------------------------------------
+# TODO
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+# Martin Sill
+# m.sill@dkfz.de                                                                  
+# 
+# 2018-08-16 UTC
+#--------------------------------------------------------------------            
+
+# deploy
+#library(rsconnect)
+#deployApp()
 
 library(shiny)
 library(markdown)
@@ -16,7 +20,6 @@ samplesizeNormapprox <- function(alpha, beta, prop, nullp){
              (qnorm((1-beta))*sqrt(prop*(1-prop))))^2/((prop-nullp)^2))
 }
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
    
    # Application title
@@ -61,7 +64,6 @@ ui <- fluidPage(
         plotOutput("cregion",height = "250px")
       ),
       
-      # Show a plot of the generated distribution
       mainPanel(
         "This tool can be used to estimates sample size for a phase 2
         study where the aim is to test that the performance of medical
@@ -76,22 +78,19 @@ ui <- fluidPage(
         using different exact or approximate confidence intervals for the difference of binomial
         proportions as described in Agresti and Coull (1998).",
        
-        #includeMarkdown("ref.md"),
+        includeMarkdown("ref.md"),
         
          plotOutput("plot",height = "800px")
       )
    )
 )
 
-# Define server logic required to draw a histogram
+# Server
 server <- function(input, output) {
    
    output$plot <- renderPlot({
      
      layout(matrix(c(1,2,3,4),2))
-     
-     #print(input$beta)
-     #print(input$alpha)
      
      betas <- seq(0.5,0.01,by=-.01)
      beta_star <- round(1-sqrt(1-input$beta),3)
@@ -111,7 +110,7 @@ server <- function(input, output) {
      nexact <- n[which(betasex >= sqrt(1-input$beta))[1]]
      bexact <- which(betasex >= sqrt(1-input$beta))[1]
      abline(v=n[bexact],col="blue",lwd=2)
-     #abline(h=betasex[bexact],col="blue",lwd=2)
+     
      legend("bottomright",cex=1.5,legend=c(paste0("normal approximation N = ",nnorm),paste0("simulation binom.confint N = ",nexact),
                                            paste0("1-beta_star = ",1-beta_star)),text.col=c("black","blue","red"),pch=16,lwd=2,
                                            col=c("black","blue","red"),bty="n")
